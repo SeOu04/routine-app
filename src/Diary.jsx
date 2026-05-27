@@ -3,13 +3,48 @@ import { useState, useEffect } from 'react'
 const MOODS = ['', '😞', '😕', '😐', '🙂', '😄']
 const MOOD_LABELS = ['', 'Tough', 'Meh', 'Okay', 'Good', 'Great']
 
+const DIARY_RANKS = [
+  { min: 0,  icon: '📔', name: 'Newcomer',      color: '#78716C' },
+  { min: 3,  icon: '✍️',  name: 'Journaler',     color: '#A8A29E' },
+  { min: 7,  icon: '📖', name: 'Story Keeper',  color: '#60A5FA' },
+  { min: 14, icon: '🖊️', name: 'Chronicler',    color: '#34D399' },
+  { min: 30, icon: '📜', name: 'Sage Writer',   color: '#FB923C' },
+  { min: 60, icon: '🏆', name: 'Legendary',     color: '#FBBF24' },
+]
+
+function getDiaryRank(count) {
+  let r = DIARY_RANKS[0]
+  for (const dr of DIARY_RANKS) if (count >= dr.min) r = dr
+  return r
+}
+
 function loadDiary() {
   try {
     const saved = localStorage.getItem('diary')
     return saved ? JSON.parse(saved) : []
-  } catch {
-    return []
-  }
+  } catch { return [] }
+}
+
+function DiaryEntryCard({ entry }) {
+  const [expanded, setExpanded] = useState(false)
+  const isLong = entry.text.length > 60
+  const preview = isLong && !expanded ? entry.text.slice(0, 60) + '...' : entry.text
+
+  return (
+    <div className="diary-entry" onClick={() => isLong && setExpanded(!expanded)}>
+      <div className="diary-entry-header">
+        <div className="diary-entry-date">{entry.date}</div>
+        <div className="diary-entry-meta">
+          <span className="diary-entry-rates">🌅{entry.morningRate}% 🌙{entry.nightRate}%</span>
+          <span className="diary-entry-mood">{MOODS[entry.mood]}</span>
+        </div>
+      </div>
+      <div className="diary-entry-text">{preview}</div>
+      {isLong && (
+        <div className="diary-entry-toggle">{expanded ? 'Show less ▲' : 'Read more ▼'}</div>
+      )}
+    </div>
+  )
 }
 
 export default function Diary({ morningRate, nightRate, streak }) {
@@ -25,6 +60,8 @@ export default function Diary({ morningRate, nightRate, streak }) {
   const dateStr = now.toLocaleDateString('en-US', {
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'short'
   })
+
+  const rank = getDiaryRank(entries.length)
 
   function save() {
     if (!text.trim() && mood === 0) return
@@ -46,6 +83,20 @@ export default function Diary({ morningRate, nightRate, streak }) {
       <div className="diary-header">
         <div className="diary-title">Today's Reflection</div>
         <div className="diary-date">{dateStr}</div>
+      </div>
+
+      <div className="diary-rank-card">
+        <div className="diary-rank-left">
+          <div className="diary-rank-icon">{rank.icon}</div>
+          <div>
+            <div className="diary-rank-label">Diary Rank</div>
+            <div className="diary-rank-name" style={{ color: rank.color }}>{rank.name}</div>
+          </div>
+        </div>
+        <div className="diary-rank-right">
+          <div className="diary-rank-count" style={{ color: rank.color }}>{entries.length}</div>
+          <div className="diary-rank-sub">entries</div>
+        </div>
       </div>
 
       <div className="mood-card">
@@ -84,19 +135,11 @@ export default function Diary({ morningRate, nightRate, streak }) {
 
       {entries.length > 0 && (
         <div className="diary-history">
-          <div className="diary-history-title">Past Entries</div>
-          {entries.map(e => (
-            <div key={e.id} className="diary-entry">
-              <div className="diary-entry-header">
-                <div className="diary-entry-date">{e.date}</div>
-                <div className="diary-entry-meta">
-                  <span className="diary-entry-rates">🌅{e.morningRate}% 🌙{e.nightRate}%</span>
-                  <span className="diary-entry-mood">{MOODS[e.mood]}</span>
-                </div>
-              </div>
-              <div className="diary-entry-text">{e.text}</div>
-            </div>
-          ))}
+          <div className="diary-history-title">
+            Past Entries
+            <span className="diary-no-delete">🔒 entries are permanent</span>
+          </div>
+          {entries.map(e => <DiaryEntryCard key={e.id} entry={e} />)}
         </div>
       )}
     </div>

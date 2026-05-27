@@ -536,4 +536,77 @@ body {
   font-size: 13px;
   color: #A8A29E;
   line-height: 1.6;
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
+
+.diary-rank-card {
+  background: #1C0A00;
+  border: 1.5px solid #78350F;
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.diary-rank-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.diary-rank-icon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.diary-rank-label {
+  font-size: 10px;
+  color: #78716C;
+  margin-bottom: 3px;
+  letter-spacing: 0.06em;
+}
+
+.diary-rank-name {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.diary-rank-right {
+  text-align: center;
+}
+
+.diary-rank-count {
+  font-size: 26px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.diary-rank-sub {
+  font-size: 10px;
+  color: #78716C;
+  margin-top: 2px;
+}
+
+.diary-history-title {
+  font-size: 12px;
+  color: #78716C;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.diary-no-delete {
+  font-size: 10px;
+  color: #44403C;
+}
+
+.diary-entry-toggle {
+  font-size: 11px;
+  color: #FB923C;
+  margin-top: 6px;
+  cursor: pointer;
 }
